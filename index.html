@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigitalPulse — Focus Better. Live Better.</title>
+  <meta name="description" content="DigitalPulse is a digital wellbeing desktop app that helps you focus, monitor screen habits, and build healthier productivity routines." />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --bg-soft: #121b2e;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.1);
+      --text: #e8eefc;
+      --muted: #a9b6d3;
+      --primary: #6ea8fe;
+      --primary-2: #8b5cf6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 22px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(110,168,254,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(139,92,246,0.16), transparent 28%),
+        linear-gradient(180deg, #0a1020 0%, #0b1220 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(11,18,32,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: var(--shadow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a:hover,
+    .footer-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      padding: 0.82rem 1.15rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      font-weight: 600;
+    }
+
+    .hero {
+      padding: 72px 0 44px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      color: #dce7ff;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(2.3rem, 5vw, 4.6rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      font-size: 1.06rem;
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.95rem 1.25rem;
+      border-radius: 14px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 520px;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(110,168,254,0.28), transparent 70%);
+      filter: blur(10px);
+    }
+
+    .mock-window {
+      height: 100%;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, #0e1629, #0b1220);
+      overflow: hidden;
+    }
+
+    .window-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .dots {
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .window-body {
+      padding: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .stat-card,
+    .glass,
+    .feature,
+    .shot,
+    .faq-item,
+    .download-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+    }
+
+    .stat-card {
+      padding: 1rem;
+    }
+
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+    }
+
+    .muted { color: var(--muted); }
+
+    .bar-wrap {
+      padding: 1rem;
+    }
+
+    .bar {
+      height: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.7rem;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 72%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    section {
+      padding: 34px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .feature {
+      padding: 1.2rem;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(110,168,254,0.12);
+      border: 1px solid rgba(110,168,254,0.2);
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.05rem;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .downloads {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1rem;
+    }
+
+    .download-card {
+      padding: 1.35rem;
+    }
+
+    .download-list {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .download-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .platform-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .tag {
+      padding: 0.42rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .shot {
+      overflow: hidden;
+      min-height: 280px;
+      position: relative;
+    }
+
+    .shot .placeholder {
+      height: 100%;
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,0.72);
+      background:
+        linear-gradient(135deg, rgba(110,168,254,0.18), rgba(139,92,246,0.14)),
+        rgba(255,255,255,0.04);
+      font-weight: 700;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .faq {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .faq-item {
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: 0;
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      padding: 1rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+      color: var(--muted);
+      padding: 0 1.15rem;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 220px;
+      padding-bottom: 1rem;
+    }
+
+    .cta {
+      padding-bottom: 72px;
+    }
+
+    .cta-box {
+      padding: 1.4rem;
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(110,168,254,0.18), rgba(139,92,246,0.18));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 22px 0 36px;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .downloads,
+      .feature-grid,
+      .shots {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding-top: 42px;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .hero-meta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .download-item,
+      .cta-box,
+      .footer-inner,
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <div class="brand-badge">DP</div>
+        <div>
+          <div>DigitalPulse</div>
+          <small class="muted">Digital wellbeing for desktop</small>
+        </div>
+      </a>
+
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#downloads">Downloads</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#faq">FAQ</a>
+      </div>
+
+      <a class="nav-cta" href="#downloads">Get DigitalPulse</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal show">
+          <div class="eyebrow">● Version 2.0.0 now available</div>
+          <h1>Take control of screen time and focus with <span style="background: linear-gradient(135deg, #9cc2ff, #b79cff); -webkit-background-clip: text; background-clip: text; color: transparent;">DigitalPulse</span>.</h1>
+          <p>
+            DigitalPulse is a desktop digital wellbeing app built to help users stay focused, understand app usage patterns,
+            reduce distractions, and build healthier productivity habits.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/fonker001/digitalpulse-releases/releases/download/v2.0.0/DigitalPulse-Setup-2.0.0.exe">Download the App</a>
+            <a class="btn btn-secondary" href="#features">Explore Features</a>
+          </div>
+
+          <div class="hero-meta">
+            <span>Version 2.0.0</span>
+            <span>Windows-ready</span>
+            <span>Focus sessions</span>
+            <span>Activity tracking</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal">
+          <div class="mock-window">
+            <div class="window-top">
+              <div class="dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <small class="muted">DigitalPulse Dashboard</small>
+            </div>
+
+            <div class="window-body">
+              <div class="mini-grid">
+                <div class="stat-card">
+                  <div class="muted">Focus Time Today</div>
+                  <div class="stat-value" id="focusTime">2h 15m</div>
+                  <div class="muted">+32% from yesterday</div>
+                </div>
+                <div class="stat-card">
+                  <div class="muted">Distraction Events</div>
+                  <div class="stat-value" id="distractions">7</div>
+                  <div class="muted">Tracked across active apps</div>
+                </div>
+              </div>
+
+              <div class="bar-wrap glass">
+                <strong>Daily Focus Goal</strong>
+                <div class="muted">72% completed</div>
+                <div class="bar"><span id="goalBar"></span></div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="stat-card">
+                  <div class="muted">Top Distracting App</div>
+                  <div class="stat-value" style="font-size:1.2rem;">YouTube</div>
+                  <div class="muted">48 minutes this session</div>
+                </div>
+                <div class="stat-card">
+                  <div class="muted">Pulse Score</div>
+                  <div class="stat-value">84</div>
+                  <div class="muted">Healthy productivity trend</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Built for healthier digital habits</h2>
+          </div>
+          <p>Use this section to explain what makes DigitalPulse useful to students, professionals, remote workers, and anyone trying to manage screen time better.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature reveal">
+            <div class="feature-icon">⏱</div>
+            <h3>Focus Sessions</h3>
+            <p>Run guided focus timers and structure work into intentional sessions that reduce context switching and improve concentration.</p>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature-icon">📊</div>
+            <h3>Usage Insights</h3>
+            <p>Track active application usage, identify attention drains, and understand where your time goes during the day.</p>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature-icon">🔒</div>
+            <h3>App Restrictions</h3>
+            <p>Reduce interruptions by limiting selected apps during focus periods and encouraging better work boundaries.</p>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature-icon">🧠</div>
+            <h3>Digital Wellbeing</h3>
+            <p>Support more mindful computer use through clear feedback, habit awareness, and healthier productivity routines.</p>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature-icon">💻</div>
+            <h3>Desktop Friendly</h3>
+            <p>Designed for desktop users who want a focused environment without relying entirely on mobile-based wellbeing tools.</p>
+          </article>
+
+          <article class="feature reveal">
+            <div class="feature-icon">⚡</div>
+            <h3>Simple Setup</h3>
+            <p>Download, install, launch, and start building better habits with a clean workflow and clear interface.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="downloads">
+      <div class="container downloads">
+        <div class="download-card reveal">
+          <div class="section-head" style="margin-bottom:0.5rem;">
+            <div>
+              <h2>Download DigitalPulse</h2>
+            </div>
+          </div>
+          <p class="muted">Share DigitalPulse through a clean direct-download experience without exposing your development workflow.</p>
+
+          <div class="download-list">
+            <div class="download-item">
+              <div class="platform">
+                <div class="platform-badge">🪟</div>
+                <div>
+                  <strong>Windows Installer</strong>
+                  <div class="muted">Recommended for most users</div>
+                </div>
+              </div>
+              <a class="btn btn-primary" href="https://github.com/fonker001/digitalpulse-releases/releases/download/v2.0.0/DigitalPulse-Setup-2.0.0.exe" target="_blank" rel="noreferrer">Download</a>
+            </div>
+
+            <div class="download-item">
+              <div class="platform">
+                <div class="platform-badge">✨</div>
+                <div>
+                  <strong>DigitalPulse 2.0.0</strong>
+                  <div class="muted">Latest public release</div>
+                </div>
+              </div>
+              <a class="btn btn-secondary" href="#screenshots">View Preview</a>
+            </div>
+          </div>
+        </div>
+
+        <aside class="download-card reveal">
+          <h3 style="margin-top:0;">Current release</h3>
+          <p class="muted">Use this side panel to highlight the latest version, core improvements, and supported systems.</p>
+
+          <div class="tag-row">
+            <span class="tag">Version 2.0.0</span>
+            <span class="tag">Windows</span>
+            <span class="tag">Desktop App</span>
+            <span class="tag">Direct Download</span>
+          </div>
+
+          <div style="margin-top:1rem;" class="muted">
+            <strong style="color: var(--text);">What to highlight:</strong><br>
+            • Version 2.0.0 improvements<br>
+            • Windows support details<br>
+            • Performance or UI upgrades<br>
+            • Main user benefits<br>
+            • Simple installation steps
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="screenshots">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Show the app interface</h2>
+          </div>
+          <p>Swap these placeholders with actual screenshots of your focus timer, dashboard, activity monitor, or app lock interface.</p>
+        </div>
+
+        <div class="shots">
+          <div class="shot reveal">
+            <div class="placeholder">Screenshot 1<br>Focus Timer / Dashboard</div>
+          </div>
+          <div class="shot reveal">
+            <div class="placeholder">Screenshot 2<br>Activity Monitor</div>
+          </div>
+          <div class="shot reveal">
+            <div class="placeholder">Screenshot 3<br>App Restriction View</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Frequently asked questions</h2>
+          </div>
+          <p>These help users trust the product before downloading it.</p>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item reveal active">
+            <button class="faq-question">What does DigitalPulse do?<span>+</span></button>
+            <div class="faq-answer">
+              DigitalPulse helps users improve focus, understand desktop usage habits, and reduce distractions through tools like focus sessions, activity tracking, and app restriction features.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">How do I get DigitalPulse?<span>+</span></button>
+            <div class="faq-answer">
+              Download the Windows installer from the download section on this page and follow the installation steps provided with the release.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">Which operating systems are supported?<span>+</span></button>
+            <div class="faq-answer">
+              Update this section with your actual supported platforms. If your current build is Windows-only, say that clearly.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button class="faq-question">How can I get support or share feedback?<span>+</span></button>
+            <div class="faq-answer">
+              Update this section with your preferred support channel, such as an email address, contact form, or official website.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-box reveal">
+          <div>
+            <h2 style="margin:0 0 0.4rem;">Ready to share DigitalPulse?</h2>
+            <div class="muted">Present DigitalPulse as a polished product experience.</div>
+          </div>
+          <div class="hero-actions" style="margin:0;">
+            <a class="btn btn-primary" href="https://github.com/fonker001/digitalpulse-releases/releases/download/v2.0.0/DigitalPulse-Setup-2.0.0.exe">Download Now</a>
+            <a class="btn btn-secondary" href="#features">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>© <span id="year"></span> DigitalPulse. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="#downloads">Download</a>
+        <a href="#screenshots">Preview</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        item.classList.toggle('active');
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    const focusValues = ['2h 15m', '2h 28m', '2h 36m', '2h 42m'];
+    const distractionValues = ['7', '6', '5', '4'];
+    const widths = ['72%', '76%', '81%', '85%'];
+
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % focusValues.length;
+      document.getElementById('focusTime').textContent = focusValues[i];
+      document.getElementById('distractions').textContent = distractionValues[i];
+      document.getElementById('goalBar').style.width = widths[i];
+    }, 2200);
+  </script>
+</body>
+</html>
