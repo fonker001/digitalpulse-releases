@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DigitalPulse</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb",
+                        accent: "#7c3aed"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('bg-black/80', window.scrollY > 20);
+        });
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at 20% 20%, rgba(37,99,235,0.15), transparent 40%),
+                        radial-gradient(circle at 80% 0%, rgba(124,58,237,0.15), transparent 40%),
+                        #020617;
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="text-white">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 backdrop-blur bg-black/30 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+        <h1 class="font-semibold text-lg tracking-wide">
+            DigitalPulse
+        </h1>
+
+        <div class="flex items-center gap-6 text-sm">
+            <a href="#features" class="text-gray-400 hover:text-white transition">Features</a>
+            <a href="#screens" class="text-gray-400 hover:text-white transition">Screens</a>
+
+            <a href="{% url 'download_latest' %}"
+               class="bg-primary px-5 py-2 rounded-xl hover:scale-105 transition">
+                Download
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+<div class="pt-20">
+    {% block content %}{% endblock %}
+</div>
+
+<script>
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

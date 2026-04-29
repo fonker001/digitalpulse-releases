@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="min-h-[90vh] flex flex-col justify-center px-6">
+
+    <div class="max-w-5xl mx-auto text-center fade-up">
+
+        <div class="mb-4">
+            <span class="bg-gray-800 text-sm px-4 py-1 rounded-full text-gray-300">
+                Version {{ latest.version }}
+            </span>
+        </div>
+
+        <h1 class="text-6xl md:text-7xl font-bold leading-tight mb-6">
+            Precision Control Over Your Digital Behavior
+        </h1>
+
+        <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            DigitalPulse gives you visibility, control, and discipline over how you spend time on your system.
+        </p>
+
+        <div class="flex justify-center gap-4 mb-14">
+            <a href="{% url 'download_latest' %}"
+               onclick="this.innerText='Preparing download...'; this.classList.add('opacity-70')"
+               class="bg-primary px-8 py-4 rounded-xl text-lg font-semibold hover:scale-105 transition shadow-lg">
+                Download for Windows
+            </a>
+
+            <a href="#features"
+               class="border border-gray-700 px-8 py-4 rounded-xl hover:bg-gray-900 transition">
+                Explore Features
+            </a>
+        </div>
+
+    </div>
+
+    <!-- FEATURED SCREEN -->
+    {% if latest.screenshots.first %}
+    <div class="max-w-5xl mx-auto fade-up">
+        <img src="{{ latest.screenshots.first.image.url }}"
+             class="rounded-2xl shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-800 
+                    hover:scale-[1.02] transition duration-700">
+    </div>
+    {% endif %}
+
+</section>
+
+<!-- TRUST / METRICS -->
+<section class="py-16 border-y border-gray-800 bg-black/30 backdrop-blur">
+    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 text-center gap-8">
+
+        <div class="fade-up">
+            <p class="text-4xl font-semibold">{{ latest.download_count }}</p>
+            <p class="text-gray-500 text-sm">Downloads</p>
+        </div>
+
+        <div class="fade-up">
+            <p class="text-4xl font-semibold">{{ releases|length }}</p>
+            <p class="text-gray-500 text-sm">Releases</p>
+        </div>
+
+        <div class="fade-up">
+            <p class="text-4xl font-semibold">Realtime</p>
+            <p class="text-gray-500 text-sm">Monitoring</p>
+        </div>
+
+        <div class="fade-up">
+            <p class="text-4xl font-semibold">Low</p>
+            <p class="text-gray-500 text-sm">System Impact</p>
+        </div>
+
+    </div>
+</section>
+
+
+
+<!-- FEATURES -->
+<section id="features" class="py-24 px-6">
+    <div class="p-8 rounded-2xl border border-gray-800 
+            hover:border-primary hover:-translate-y-1 
+            hover:shadow-[0_10px_40px_rgba(37,99,235,0.15)] 
+            transition duration-300 fade-up">
+
+        <div class="text-center mb-16 fade-up">
+            <h2 class="text-4xl font-bold mb-4">
+                Built for Control and Clarity
+            </h2>
+            <p class="text-gray-400">
+                Every feature is engineered for discipline and insight.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="p-8 rounded-2xl border border-gray-800 hover:border-primary transition fade-up">
+                <h3 class="text-xl font-semibold mb-3">Activity Monitoring</h3>
+                <p class="text-gray-400">
+                    Track active applications and usage patterns in real time with minimal overhead.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-2xl border border-gray-800 hover:border-primary transition fade-up">
+                <h3 class="text-xl font-semibold mb-3">Application Restriction</h3>
+                <p class="text-gray-400">
+                    Enforce rules on usage and eliminate distractions when focus is required.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-2xl border border-gray-800 hover:border-primary transition fade-up">
+                <h3 class="text-xl font-semibold mb-3">Behavior Analytics</h3>
+                <p class="text-gray-400">
+                    Analyze trends and patterns to improve productivity over time.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section id="screens" class="py-24 px-6 border-t border-gray-800">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="text-center mb-16 fade-up">
+            <h2 class="text-4xl font-bold mb-4">
+                Interface Preview
+            </h2>
+            <p class="text-gray-400">
+                Clean, focused, and designed for efficiency.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-10">
+            {% for shot in latest.screenshots.all %}
+                <div class="fade-up">
+                    <img src="{{ shot.image.url }}"
+                         class="rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] 
+                                hover:scale-[1.03] transition duration-500">
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<!-- RELEASES -->
+<section class="py-24 px-6 border-t border-gray-800">
+    <div class="max-w-5xl mx-auto">
+
+        <div class="text-center mb-12 fade-up">
+            <h2 class="text-3xl font-semibold">
+                Release History
+            </h2>
+        </div>
+
+        <div class="space-y-10">
+            {% for r in releases %}
+                <div class="border-l border-gray-800 pl-6 relative fade-up">
+
+                    <div class="absolute -left-2 top-2 w-4 h-4 bg-primary rounded-full"></div>
+
+                    <p class="font-semibold">Version {{ r.version }}</p>
+                    <p class="text-sm text-gray-500">{{ r.release_date }}</p>
+
+                    <p class="text-gray-400 mt-2">
+                        {{ r.description|truncatewords:20 }}
+                    </p>
+
+                    <p class="text-sm text-gray-500 mt-2">
+                        {{ r.download_count }} downloads
+                    </p>
+
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-24 text-center border-t border-gray-800">
+    <div class="fade-up">
+
+        <h2 class="text-4xl font-bold mb-6">
+            Start Optimizing Your Workflow
+        </h2>
+
+        <p class="text-gray-400 mb-8">
+            Download DigitalPulse and take full control of your system usage.
+        </p>
+
+        <a href="{% url 'download_latest' %}"
+           class="bg-primary px-10 py-5 rounded-xl text-lg font-semibold hover:scale-105 transition">
+            Download Now
+        </a>
+
+    </div>
+</section>
+
+{% endblock %}
